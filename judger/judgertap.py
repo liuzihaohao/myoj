@@ -7,6 +7,7 @@ def get_new_record():
         now=json.loads(res.text)
         return now
     except Exception:
+        print(e)
         time.sleep(2)
         return None
 if __name__=='__main__':

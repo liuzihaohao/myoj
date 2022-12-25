@@ -1,2 +1,0 @@
-5a53937f-444b-4105-82ac-6fccbb21fc95.o: \
- c:\Users\haohan\Desktop\myoj\judger\judger_cpp\tmp\5a53937f-444b-4105-82ac-6fccbb21fc95.cpp

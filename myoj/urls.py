@@ -50,3 +50,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
+if not DEBUG:
+    urlpatterns=urlpatterns+[re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT, })]
