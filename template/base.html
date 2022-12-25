@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title%}None{% endblock %}</title>
+
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-theme.min.css">
+
+    <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/js/holder.min.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="/static/katex/katex.min.css">
+    <script src="/static/katex/katex.min.js"></script>
+
+    <script src="/static/js/webfont.js"></script>
+    <script src="/static/js/snap.svg-min.js"></script>
+    <script src="/static/js/underscore-min.js"></script>
+    <script src="/static/js/sequence-diagram-min.js"></script>
+
+    <script src="/static/js/raphael.min.js"></script>
+    <script src="/static/js/flowchart-latest.js"></script>
+
+    <style>
+      nav a{
+        color: white !important;
+        font-size: medium !important;
+      }
+      nav a:hover{
+        background-color: gray !important;
+      }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-9" aria-expanded="false">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">主页</a>
+          </div>
+  
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-9">
+            <ul class="nav navbar-nav">
+              <li><a href="/problem_list/">题目</a></li>
+              <li><a href="/record_list/">记录</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="/login/">登录</a></li>
+              <li><a href="/register/">注册</a></li>
+            </ul>
+          </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+      </nav>
+      <div class="container">
+        {% if messages %}
+        <div class="alert alert-warning" role="alert">
+            {% for message in messages %}
+            <a href="#" class="alert-link">{{ message }}</a>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %}None{% endblock %}
+      </div>
+</body>
+</html>

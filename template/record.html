@@ -1,0 +1,65 @@
+{% extends 'base_logined.html' %}
+
+{% block title%}记录详情{% endblock %}
+
+{% block content %}
+<h2>记录详情 - {{ record.id }}</h2>
+<div class="col-md-8">
+    <h3>子测试点</h3>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>状态</th>
+            <th>使用时间(ms)</th>
+            <th>使用内存(MB)</th>
+            {% if record.islookans %}
+            <th>输入</th>
+            <th>输出</th>
+            <th>答案</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in record.childtask.all %}
+        <tr>
+            <th scope="row">{{ i.id }}</th>
+            <td>{{ i.get_stats_display }}</td>
+            <td>{{ i.use_time }}</td>
+            <td>{{ i.use_memory }}</td>
+            {% if record.islookans %}
+            <td>{{ i.stdins }}</td>
+            <td>{{ i.stdouts }}</td>
+            <td>{{ i.stdanss }}</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div>
+        <p class="bg-warning">{{ record.outhertings|safe }}</p>
+    </div>
+</div>
+<div class="col-md-4">
+    <h3>记录详情</h3>
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th scope="row">提交用户: {{ record.foruser }}</th>
+            </tr><tr>
+                <td scope="row">评测状态: {{ record.get_stats_display }}</td>
+            </tr><tr>
+                <td scope="row">评测分数: {{ record.score }}</td>
+            </tr><tr>
+                <td>评测语言: {{ record.forlanguage }}</td>
+            </tr><tr>
+                <td>提交时间: {{ record.crtime }}</td>
+            </tr><tr>
+                <td>使用内存(MB): {{ record.use_memory }}</td>
+            </tr><tr>
+                <td>使用时间(s): {{ record.use_time }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

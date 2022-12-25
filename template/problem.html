@@ -1,0 +1,68 @@
+{% extends 'base_logined.html' %}
+
+{% block title%}题目{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="/static/editormd/css/editormd.preview.css" />
+<div id="test-markdown-view">
+  <h1>{{problem.title|safe}}</h1>
+  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">提交代码</button>
+  <a href="/record_list/?u={{ username }}&t={{ problem.id }}" style="color: #fff;background-color: #5cb85c;" type="button" class="btn btn-success">提交记录</a>
+  {% for i in problem.tags.all %}
+  <span style="padding: 3px;color: white;background-color: {{ i.color }}">{{ i.text }}</span>
+  {% endfor %}
+  <span>内存限制(MB):{{ problem.max_memory }} 时间限制(ms):{{ problem.max_time }}</span>
+  <textarea style="display:none;">{{problem.text|safe}}</textarea>
+</div>
+<script src="/static/editormd/editormd.js"></script>
+<script src="/static/editormd/lib/marked.min.js"></script>
+<script src="/static/editormd/lib/prettify.min.js"></script>
+<script type="text/javascript">
+  $(function () {
+    var testView = editormd.markdownToHTML("test-markdown-view", {});
+    var qqq = $(".editormd-tex");
+    for (var i = 0; i < qqq.length; i++) {
+      qqq[i].id = "temps";
+      katex.render(qqq[i].innerText, document.getElementById("temps"));
+      qqq[i].id = "";
+    }
+    qqq = $(".flowchart");
+    for (var i = 0; i < qqq.length; i++) {
+      qqq[i].id = "diagram";
+      flowchart.parse(qqq[i].innerText).drawSVG('diagram');
+      qqq[i].id = "";
+    }
+    $(".sequence-diagram").sequenceDiagram({ theme: 'hand' });
+  });
+</script>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">提交代码</h4>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="/updatacode/{{ problem.id }}/">
+          <div class="form-group">
+            <select class="form-control" name="forlanguage">
+              {% for p in languages %}
+              <option>{{ p.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% csrf_token %}
+          <div class="form-group">
+            <textarea class="form-control" rows="3" name="code"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-success">提交</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

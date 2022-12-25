@@ -1,0 +1,3 @@
+C:/Program Files (x86)/Dev-Cpp/MinGW64/bin/../lib/gcc/x86_64-w64-mingw32/4.9.2/../../../../x86_64-w64-mingw32/lib/../lib/libmingw32.a(lib64_libmingw32_a-crt0_c.o): In function `main':
+C:/crossdev/src/mingw-w64-v3-git/mingw-w64-crt/crt/crt0_c.c:18: undefined reference to `WinMain'
+collect2.exe: error: ld returned 1 exit status
