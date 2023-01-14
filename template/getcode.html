@@ -1,0 +1,21 @@
+{% extends 'base_logined.html' %}
+
+{% block title%}记录详情{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/highlight/styles/androidstudio.min.css"/>
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/js/clipboard.min.js"></script>
+<h2>记录详情 - 源代码 - {{ pids }}  <a href="/record/{{pids}}/">返回</a></h2>
+<div>
+  <pre style="position: relative;">
+    <a data-clipboard-target="#copytext" id="copy-btn" type="button" class="btn btn-success" style="position: absolute;right: 13px;">复制</a>
+    <code id="copytext">{{code}}</code>
+  </pre>
+</div>
+</div>
+<script>
+    hljs.initHighlightingOnLoad();
+    new ClipboardJS('#copy-btn');
+</script>
+{% endblock %}

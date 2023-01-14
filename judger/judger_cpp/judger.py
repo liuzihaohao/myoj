@@ -1,5 +1,6 @@
 from . import *
 from .statr import *
+import os
 Stats_Record=(
     ('AC','Accept'),
     ('UC','Unaccepted'),
@@ -20,6 +21,15 @@ class Judger(object):
         self.outhertings=""
         self.childtaskst=[]
         self.stats="JI"
+    def clentmp(self):
+        try:
+            for i in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tmp")):
+                file_data = os.path.join(os.path.dirname(os.path.abspath(__file__)),"tmp",i)
+                if os.path.isfile(file_data) == True:
+                    os.remove(file_data)
+        except Exception as e:
+            pass
+            # print(e)
     def run(self):
         flag=True
         comdir=""
@@ -70,12 +80,15 @@ class Judger(object):
                 self.stats="AC"
             else:
                 self.stats="UC"
+        self.clentmp()
+        if len(self.outhertings)>1999:
+            self.outhertings="结果过长,仅展示部分"+self.outhertings[:1999]
         return {
             "id":self.id,
             "use_time":self.use_time,
             "use_memory":self.use_memory,
             "stats":self.stats,
             "score":self.allscore,
-            "outhertings":self.outhertings,
+            "outhertings":self.outhertings.replace(os.path.join(os.path.dirname(os.path.abspath(__file__)),"tmp"),""),
             "childtask":self.childtaskst,
         }

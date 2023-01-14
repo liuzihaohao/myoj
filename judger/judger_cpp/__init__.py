@@ -48,10 +48,13 @@ class CPprgCPP(CompileCpp,SandBoxRun,ComParisonAns,CheckUp):
                 # if self.checkcpp(self.fname_file,self.fname_check)!=0:
                 #     self.delout()
                 #     return (CE,'None'),usingmomy,usingtime,ou
-                ttt=open(os.path.join(self.BASE_DIR,str(uuid4())+'txt'),"w+",encoding="utf-8")
+                asdfasdf=os.path.join(self.BASE_DIR,str(uuid4())+'txt')
+                ttt=open(asdfasdf,"w+",encoding="utf-8")
                 if self.compile(self.fname_file,self.fname_efile,ttt)!=0:
                     self.delout()
                     tttttte=""
+                    ttt.close()
+                    ttt=open(asdfasdf,'r',encoding="utf-8")
                     tttttte=ttt.read()
                     ttt.close()
                     return (CE,tttttte),usingmomy,usingtime,ou

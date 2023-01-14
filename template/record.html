@@ -23,7 +23,7 @@
         <tbody>
         {% for i in record.childtask.all %}
         <tr>
-            <th scope="row">{{ i.id }}</th>
+            <th scope="row">{{ forloop.counter }}</th>
             <td>{{ i.get_stats_display }}</td>
             <td>{{ i.use_time }}</td>
             <td>{{ i.use_memory }}</td>
@@ -58,6 +58,8 @@
                 <td>使用内存(MB): {{ record.use_memory }}</td>
             </tr><tr>
                 <td>使用时间(s): {{ record.use_time }}</td>
+            </tr><tr>
+                <td><a href="/getcode/{{ record.id }}/">提交的代码</a></td>
             </tr>
         </tbody>
     </table>

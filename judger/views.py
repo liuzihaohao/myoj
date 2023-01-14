@@ -6,11 +6,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse,HttpResponse,HttpResponseForbidden
 from . import models
 # Create your views here.
 class HttpExpectationFailedResponse(HttpResponse):
     status_code = 417
+
 def register(request):
     if request.user.is_authenticated:
         return redirect("/home/")
@@ -113,8 +114,21 @@ def record_list(request):
 
 @login_required
 def record(request,pids):
-    obj=models.Record.objects.get(id=pids)
-    return render(request,'record.html',{"record":obj})
+    if obj.foruser.username==request.user.username:
+        obj=models.Record.objects.get(id=pids)
+        return render(request,'record.html',{"record":obj})
+    else:
+        return HttpResponseForbidden("<h1>Forbidden</h1><p>The server understands the request but refuses to authorize it.</p>")
+
+@login_required
+def getcode(request,pids):
+    if obj.foruser.username==request.user.username:
+        obj=models.Record.objects.get(id=pids)
+        return render(request,'getcode.html',{
+            "pids":pids,"code":obj.upcode
+        })
+    else:
+        return HttpResponseForbidden("<h1>Forbidden</h1><p>The server understands the request but refuses to authorize it.</p>")
 
 @login_required
 def updatacode(request,pids):

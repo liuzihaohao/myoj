@@ -32,6 +32,7 @@ urlpatterns = [
     
     path('record_list/', record_list),
     path('record/<int:pids>/', record),
+    path('getcode/<int:pids>/', getcode),
     path('updatacode/<int:pids>/', updatacode),
     
     path('problem_list/', problem_list),
@@ -50,5 +51,5 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
-if not DEBUG:
+if not settings.DEBUG:
     urlpatterns=urlpatterns+[re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT, })]
