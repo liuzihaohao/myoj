@@ -1,0 +1,52 @@
+{% extends 'base_logined.html' %}
+
+{% block title%}用户 - {{obj.username}}{% endblock %}
+
+{% block content %}
+<h2>用户简介</h2>
+<div class="row">
+    <div class="col-sm-6 col-md-4">
+      <div class="thumbnail">
+        <!-- <img src="..." alt="..."> -->
+        <div class="caption">
+          <h3>用户名: {{obj.username}}</h3>
+          <p>注册时间: {{obj.date_joined}}</p>
+          {% if obj.is_staff %}
+          <span class="label label-info" style="font-size: inherit;">管理员</span>
+          {% endif %}
+          {% if not obj.is_active %}
+          <span class="label label-default" style="font-size: inherit;">封禁用户</span>
+          {% endif %}
+          <!-- <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p> -->
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-md-8">
+        <div class="thumbnail">
+            <div class="caption">
+                <h3>完成的题目:</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>题目</th>
+                            <th>测评记录</th>
+                            <th>评测语言</th>
+                            <th>提交时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in obj2 %}
+                        <tr>
+                            <th><a href="/problem/{{i.forproblem.id}}/">{{i.forproblem.id}} - {{i.forproblem.title}}</a></th>
+                            <th><a href="/record_list/?u={{obj.username}}&t={{i.forproblem.id}}">{{i.id}}</a></th>
+                            <th>{{i.forlanguage.name}}</th>
+                            <th>{{i.crtime}}</th>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
