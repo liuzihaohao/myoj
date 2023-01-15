@@ -22,7 +22,7 @@
         {% if i.islook %}
         <tr>
             <th scope="row">{{ i.id }}</th>
-            <td>{{ i.foruser }}</td>
+            <td><a href="/user/{{ i.foruser.id }}/">{{ i.foruser }}</a></td>
             <td><a href="/record/{{ i.id }}/">{{ i.get_stats_display }}</a></td>
             <td><a href="/problem/{{ i.forproblem.id }}">{{ i.forproblem.title }}</a></td>
             <td>{{ i.use_time }}</td>

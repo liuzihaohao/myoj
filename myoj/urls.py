@@ -28,6 +28,8 @@ router.register(r'v1/record', Record_TasksdbViewSet)
 router.register(r'v1/recordtasks', RecorddbViewSet)
 
 urlpatterns = [
+    path('user/<int:pids>/',userhome),
+    
     path('get_new/', get_new),
     
     path('record_list/', record_list),

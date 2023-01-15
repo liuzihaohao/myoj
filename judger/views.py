@@ -20,10 +20,11 @@ def register(request):
     else:
         username = request.POST.get("username")
         password = request.POST.get("password")
+        email = request.POST.get("email")
         if User.objects.filter(username=username).exists():
             messages.add_message(request, messages.INFO,'用户名已经存在')
             return redirect("/register/")
-        User.objects.create_user(username=username,password=password)
+        User.objects.create_user(username=username,password=password,email=email)
         return redirect("/login/")
     
 def login(request):
@@ -97,23 +98,32 @@ def problem(request,pids):
 @login_required
 def record_list(request):
     page = request.GET.get('page',1)
-    users = request.GET.get('u',request.user.username)
+    users = request.GET.get('u')
     problems = request.GET.get('t')
     limit = 20
     all_count=None
     if problems==None:
-        all_count=models.Record.objects.filter(foruser=models.User.objects.get(username=users))
+        if users==None:
+            all_count=models.Record.objects.all()
+        else:
+            all_count=models.Record.objects.filter(foruser=models.User.objects.get(username=users))
     else:
-        all_count=models.Record.objects.filter(
-            foruser=models.User.objects.get(username=users),
-            forproblem=models.Problem.objects.get(id=problems)
-        )
+        if users==None:
+            all_count=models.Record.objects.filter(
+                forproblem=models.Problem.objects.get(id=problems)
+            )
+        else:
+            all_count=models.Record.objects.filter(
+                foruser=models.User.objects.get(username=users),
+                forproblem=models.Problem.objects.get(id=problems)
+            )
     paginator = Paginator(all_count, limit)
     page_1 = paginator.get_page(page)
     return render(request, "record_list.html",{'page_1':page_1})
 
 @login_required
 def record(request,pids):
+    obj=models.Record.objects.get(id=pids)
     if obj.foruser.username==request.user.username:
         obj=models.Record.objects.get(id=pids)
         return render(request,'record.html',{"record":obj})
@@ -122,6 +132,7 @@ def record(request,pids):
 
 @login_required
 def getcode(request,pids):
+    obj=models.Record.objects.get(id=pids)
     if obj.foruser.username==request.user.username:
         obj=models.Record.objects.get(id=pids)
         return render(request,'getcode.html',{
@@ -203,6 +214,20 @@ def get_new(request):
             obj2.stdouts=i['stdouts']
             obj2.save()
         return HttpResponse("OK")
+
+@login_required
+def userhome(request,pids):
+    obj=models.User.objects.get(id=pids)
+    obj2=models.Record.objects.filter(
+        stats="AC",foruser=obj,
+    )
+    tt=[]
+    ttt=[]
+    for i in obj2:
+        if not i.forproblem.id in tt:
+            tt.append(i.forproblem.id)
+            ttt.append(i)
+    return render(request,"userhome.html",{"obj":obj,"obj2":ttt})
 
 from rest_framework import viewsets
 from rest_framework import permissions
