@@ -3,6 +3,7 @@ from mdeditor.fields import MDTextField
 from django.contrib.auth.models import User
 
 # Create your models here.
+
 class ProblemTag(models.Model):
     id=models.AutoField(primary_key=True,verbose_name='id')
     text=models.CharField(max_length=100,verbose_name='内容')

@@ -1,0 +1,45 @@
+{% extends 'base_logined.html' %}
+
+{% block title%}用户列表{% endblock %}
+
+{% block content %}
+<h2>用户列表</h2>
+<div class="bs-example" data-example-id="bordered-table">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>用户名</th>
+            <th>个人简介</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in problems %}
+        {% if i.islook %}
+        <tr>
+            <th scope="row"><a href="/record_list/?u={{ request.user.username }}&t={{ i.id }}">-</a></th>
+            <th scope="row">{{ i.id }}</th>
+            <td><a href="/problem/{{ i.id }}/">{{ i.title }}</a></td>
+            <td>
+                {% for j in i.tags.all %}
+                <span style="padding: 3px;color: white;background-color: {{ j.color }}">{{ j.text }}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if page_1.has_other_pages %}   
+    <div class="text-center">
+        {% if page_1.has_previous  %}
+        <a class="text-secondary" href="?page={{page_1.previous_page_number}}">上一页</a>
+        {%endif%}
+        <span class="mx-2">第&nbsp;{{page_1.number}}&nbsp;/&nbsp;{{ page_1.paginator.num_pages }}&nbsp;页</span>
+        {%  if page_1.has_next %}
+        <a class="text-success" href="?page={{page_1.next_page_number}}">下一页</a>
+        {%  endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -15,22 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include,re_path
-from rest_framework import routers
 from django.views.static import serve
 from mdeditor import urls as mdeditorurls
 from . import settings
 from judger.views import *
-
-router = routers.DefaultRouter()
-router.register(r'v1/user', UserdbViewSet)
-router.register(r'v1/problemtag', ProblemTagdbViewSet)
-router.register(r'v1/record', Record_TasksdbViewSet)
-router.register(r'v1/recordtasks', RecorddbViewSet)
+from apis.urls import urlpatterns as apis_urlpatterns
 
 urlpatterns = [
-    path('user/<int:pids>/',userhome),
+    path('apis/',include(apis_urlpatterns)),
     
-    path('get_new/', get_new),
+    path('user/setting/',usersetting),
+    path('user/<int:pids>/',userhome),
     
     path('record_list/', record_list),
     path('record/<int:pids>/', record),
@@ -50,8 +45,6 @@ urlpatterns = [
     
     path('admin/', admin.site.urls),
     path("mdeditor/", include(mdeditorurls)),
-    path('api/', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 if not settings.DEBUG:
     urlpatterns=urlpatterns+[re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT, })]

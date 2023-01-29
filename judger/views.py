@@ -1,6 +1,5 @@
-import json
+import json,re
 from django.shortcuts import render,redirect
-from django.contrib.auth.models import User
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -21,10 +20,10 @@ def register(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
         email = request.POST.get("email")
-        if User.objects.filter(username=username).exists():
+        if models.User.objects.filter(username=username).exists():
             messages.add_message(request, messages.INFO,'用户名已经存在')
             return redirect("/register/")
-        User.objects.create_user(username=username,password=password,email=email)
+        models.User.objects.create_user(username=username,password=password,email=email)
         return redirect("/login/")
     
 def login(request):
@@ -58,7 +57,7 @@ def logout(request):
 @login_required
 def change_password(request):
     if request.method=="GET":
-        return render(request,"change_password.html")
+        return render(request,"change_password.html",{"request":request})
     else:
         old_password = request.POST.get("old_password")
         new_password = request.POST.get("new_password")
@@ -93,7 +92,7 @@ def problem(request,pids):
     except Exception:
         return redirect("/problem_list/")
     bb=models.Language.objects.all()
-    return render(request, "problem.html",{"problem":aa,"username":request.user.username,'languages':bb})
+    return render(request, "problem.html",{"problem":aa,'languages':bb,"request":request})
 
 @login_required
 def record_list(request):
@@ -119,14 +118,14 @@ def record_list(request):
             )
     paginator = Paginator(all_count, limit)
     page_1 = paginator.get_page(page)
-    return render(request, "record_list.html",{'page_1':page_1})
+    return render(request, "record_list.html",{'page_1':page_1,"request":request})
 
 @login_required
 def record(request,pids):
     obj=models.Record.objects.get(id=pids)
     if obj.foruser.username==request.user.username:
         obj=models.Record.objects.get(id=pids)
-        return render(request,'record.html',{"record":obj})
+        return render(request,'record.html',{"record":obj,"request":request})
     else:
         return HttpResponseForbidden("<h1>Forbidden</h1><p>The server understands the request but refuses to authorize it.</p>")
 
@@ -136,7 +135,7 @@ def getcode(request,pids):
     if obj.foruser.username==request.user.username:
         obj=models.Record.objects.get(id=pids)
         return render(request,'getcode.html',{
-            "pids":pids,"code":obj.upcode
+            "pids":pids,"code":obj.upcode,"request":request
         })
     else:
         return HttpResponseForbidden("<h1>Forbidden</h1><p>The server understands the request but refuses to authorize it.</p>")
@@ -169,52 +168,6 @@ def updatacode(request,pids):
         else:
             return redirect("/problem_list/")
 
-@csrf_exempt
-def get_new(request):
-    if request.method=="GET":
-        obj=models.Record.objects.filter(isok=False).last()
-        if obj:
-            obj2=obj.childtask.all()
-            tt=[]
-            for i in obj2:
-                tt=tt+[{
-                    "id":int(i.id),
-                    "stdins":str(i.stdins),
-                    "stdanss":str(i.stdanss),
-                    "score":int(i.score),
-                }]
-            obj.isok=True
-            obj.save()
-            return JsonResponse({
-                'id':int(obj.id),
-                'forlanguage':str(obj.forlanguage.objname),
-                'upcode':str(obj.upcode),
-                'max_time':int(obj.forproblem.max_time),
-                'max_memory':int(obj.forproblem.max_memory),
-                'childtask':tt,
-            })
-        else:
-            return HttpExpectationFailedResponse("417 HttpExpectationFailed")
-    elif request.method=="POST":
-        res=json.loads(request.body.decode('utf-8'))
-        print(type(res))
-        print(type(res['childtask']))
-        obj=models.Record.objects.get(id=res['id'])
-        obj.use_time=res['use_time']*1000
-        obj.use_memory=res['use_memory']
-        obj.stats=res['stats']
-        obj.score=res['score']
-        obj.outhertings=res['outhertings']
-        obj.save()
-        for i in res['childtask']:
-            obj2=models.Record_Tasks.objects.get(id=i['id'])
-            obj2.use_time=i['use_time']*1000
-            obj2.use_memory=i['use_memory']
-            obj2.stats=i['stats']
-            obj2.stdouts=i['stdouts']
-            obj2.save()
-        return HttpResponse("OK")
-
 @login_required
 def userhome(request,pids):
     obj=models.User.objects.get(id=pids)
@@ -227,32 +180,34 @@ def userhome(request,pids):
         if not i.forproblem.id in tt:
             tt.append(i.forproblem.id)
             ttt.append(i)
-    return render(request,"userhome.html",{"obj":obj,"obj2":ttt})
+    return render(request,"userhome.html",{"obj":obj,"obj2":ttt,"request":request})
 
-from rest_framework import viewsets
-from rest_framework import permissions
-from .serializers import *
-class UserdbViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [
-        permissions.IsAdminUser,
-    ]
-class ProblemTagdbViewSet(viewsets.ModelViewSet):
-    queryset = ProblemTag.objects.all()
-    serializer_class = ProblemTagSerializer
-    permission_classes = [
-        permissions.DjangoModelPermissionsOrAnonReadOnly,
-    ]
-class Record_TasksdbViewSet(viewsets.ModelViewSet):
-    queryset = Record_Tasks.objects.all()
-    serializer_class = Record_TasksSerializer
-    permission_classes = [
-        permissions.IsAdminUser,
-    ]
-class RecorddbViewSet(viewsets.ModelViewSet):
-    queryset = Record.objects.filter(isok=False)
-    serializer_class = RecordSerializer
-    permission_classes = [
-        permissions.IsAdminUser,
-    ]
+@login_required
+def usersetting(request):
+    if request.method == 'GET':
+        obj=models.User.objects.get(id=request.user.id)
+        return render(request,"usersetting.html",{"request":request,"obj":obj})
+    else:
+        n_n=request.user.username
+        n_e=request.user.email
+        newename=request.POST.get("newename")
+        newemail=request.POST.get("newemail")
+        if bool(re.match("^[A-Za-z0-9_]*$",newename) and len(newename)>=5) and bool(re.search("[A-Z+][\@][A-Z+][\.][A-Z+]",newemail.upper())):
+            obj=models.User.objects.get(id=request.user.id)
+            obj.username=newename
+            obj.email=newemail
+            obj.save()
+            messages.add_message(request, messages.INFO,'修改成功')
+            return render(request,"usersetting.html",{"request":request,"obj":obj})
+        else:
+            messages.add_message(request, messages.INFO,'修改失败')
+            return redirect("/user/setting/")
+        
+@login_required
+def user_list(request):
+    page = request.GET.get('page',1)
+    limit = 20
+    all_count=models.User.objects.all()
+    paginator = Paginator(all_count, limit)
+    page_1 = paginator.get_page(page)
+    return render(request, "user_list.html",{"problems":page_1,'page_1':page_1,'request':request})
