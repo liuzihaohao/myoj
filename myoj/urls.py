@@ -20,6 +20,7 @@ from mdeditor import urls as mdeditorurls
 from . import settings
 from judger.views import *
 from apis.urls import urlpatterns as apis_urlpatterns
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('apis/',include(apis_urlpatterns)),

@@ -41,7 +41,7 @@
             }
             else 
             {      
-                var dialogContent = "<textarea placeholder=\"coding now....\" style=\"display:none;\">" + selection + "</textarea>";
+                var dialogContent = "<textarea placeholder=\"" + dialogLang.placeholder + "\" style=\"display:none;\">" + selection + "</textarea>";
 
                 dialog = this.createDialog({
                     name   : dialogName,
@@ -159,7 +159,7 @@
 
 		} else { // for Sea.js
 			define(function(require) {
-                var editormd = require("../../editormd");
+                var editormd = require("./../../editormd");
                 factory(editormd);
             });
 		}

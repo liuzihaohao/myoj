@@ -4,43 +4,25 @@
 
 {% block content %}
 <link rel="stylesheet" href="/static/editormd/css/editormd.preview.css" />
+<link rel="stylesheet" href="/static/editormd/css/editormd.css" />
 <div id="test-markdown-view">
   <h1>{{problem.title|safe}}</h1>
-  <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">提交代码</button>
-  <a href="/record_list/?u={{ username }}&t={{ problem.id }}" style="color: #fff;background-color: #5cb85c;" type="button" class="btn btn-success">提交记录</a>
+  <button type="button" class="btn btn-success hidden-print" data-toggle="modal" data-target="#myModal">提交代码</button>
+  <a href="/record_list/?u={{ username }}&t={{ problem.id }}" style="color: #fff;background-color: #5cb85c;"
+    type="button" class="btn btn-success hidden-print">提交记录</a>
   {% for i in problem.tags.all %}
   <span style="padding: 3px;color: white;background-color: {{ i.color }}">{{ i.text }}</span>
   {% endfor %}
   <span>内存限制(MB):{{ problem.max_memory }} 时间限制(ms):{{ problem.max_time }}</span>
   <textarea style="display:none;">{{problem.text|safe}}</textarea>
 </div>
-<script src="/static/editormd/editormd.js"></script>
-<script src="/static/editormd/lib/marked.min.js"></script>
-<script src="/static/editormd/lib/prettify.min.js"></script>
-<script type="text/javascript">
-  $(function () {
-    var testView = editormd.markdownToHTML("test-markdown-view", {});
-    var qqq = $(".editormd-tex");
-    for (var i = 0; i < qqq.length; i++) {
-      qqq[i].id = "temps";
-      katex.render(qqq[i].innerText, document.getElementById("temps"));
-      qqq[i].id = "";
-    }
-    qqq = $(".flowchart");
-    for (var i = 0; i < qqq.length; i++) {
-      qqq[i].id = "diagram";
-      flowchart.parse(qqq[i].innerText).drawSVG('diagram');
-      qqq[i].id = "";
-    }
-    $(".sequence-diagram").sequenceDiagram({ theme: 'hand' });
-  });
-</script>
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog" role="document"  style="width: 60%;">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-            aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
         <h4 class="modal-title" id="myModalLabel">提交代码</h4>
       </div>
       <div class="modal-body">
@@ -53,7 +35,8 @@
             </select>
           </div>
           {% csrf_token %}
-          <div class="form-group">
+          <div  id="codeNote">
+            <textarea style="display:none;" rows="3" name="code"></textarea>
             <textarea class="form-control" rows="3" name="code"></textarea>
           </div>
           <div class="modal-footer">
@@ -65,4 +48,38 @@
     </div>
   </div>
 </div>
+
+<!-- <script src="/static/editormd/editormd.js"></script> -->
+<script src="/static/editormd/editormd.min.js"></script>
+<script src="/static/editormd/lib/marked.min.js"></script>
+<script src="/static/editormd/lib/prettify.min.js"></script>
+<script type="text/javascript">
+  var testView;
+  var testView2;
+  $(function () {
+    testView = editormd.markdownToHTML("test-markdown-view", {
+      emoji: true,
+      taskList: true,
+      tex: true,  // 默认不解析
+      flowChart: true,  // 默认不解析
+      sequenceDiagram: true,  // 默认不解析
+    });
+    testView2 = editormd("codeNote", {
+      width: "100%",
+      height: 420,
+      watch: false,
+      toolbar: true,
+      codeFold: true,
+      searchReplace: true,
+      placeholder: "Enjoy coding!",
+      // value: "",
+      theme:"default",
+      mode: "clike",
+      path: '/static/editormd/lib/',
+
+
+    });
+
+  });
+</script>
 {% endblock %}

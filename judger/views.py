@@ -97,7 +97,9 @@ def problem(request,pids):
 @login_required
 def record_list(request):
     page = request.GET.get('page',1)
-    users = request.GET.get('u')
+    users=None
+    if not request.user.is_superuser:
+        users = request.GET.get('u',request.user.username)
     problems = request.GET.get('t')
     limit = 20
     all_count=None
@@ -123,7 +125,7 @@ def record_list(request):
 @login_required
 def record(request,pids):
     obj=models.Record.objects.get(id=pids)
-    if obj.foruser.username==request.user.username:
+    if obj.foruser.username==request.user.username or request.user.is_superuser:
         obj=models.Record.objects.get(id=pids)
         return render(request,'record.html',{"record":obj,"request":request})
     else:
@@ -132,7 +134,7 @@ def record(request,pids):
 @login_required
 def getcode(request,pids):
     obj=models.Record.objects.get(id=pids)
-    if obj.foruser.username==request.user.username:
+    if obj.foruser.username==request.user.username or request.user.is_superuser:
         obj=models.Record.objects.get(id=pids)
         return render(request,'getcode.html',{
             "pids":pids,"code":obj.upcode,"request":request

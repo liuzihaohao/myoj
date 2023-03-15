@@ -85,3 +85,6 @@ def get_new(request):
             obj2.stdouts=i['stdouts']
             obj2.save()
         return HttpResponse("OK")
+    
+def test(request):
+    return render(request,'test.html')

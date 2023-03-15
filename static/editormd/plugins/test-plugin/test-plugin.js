@@ -53,7 +53,7 @@
 
 		} else { // for Sea.js
 			define(function(require) {
-                var editormd = require("../../editormd");
+                var editormd = require("./../../editormd");
                 factory(editormd);
             });
 		}
